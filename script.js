@@ -10,6 +10,7 @@
   const routePercentEl = document.getElementById('route-percent');
   const audioToggle = document.getElementById('audio-toggle');
   const speedStageButtons = document.querySelectorAll('[data-speed-stage]');
+  const aircraftChoices = document.querySelectorAll('[data-aircraft]');
   let speedStage = 2;
   const overlay = document.getElementById('overlay');
   const title = document.getElementById('title');
@@ -18,46 +19,52 @@
   if (!window.THREE) { title.textContent = '게임을 불러오지 못했어요'; message.textContent = '인터넷 연결을 확인한 뒤 페이지를 새로고침해 주세요.'; startButton.hidden = true; return; }
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xa9d9ed);
+  scene.background = new THREE.Color(0x9cc4c8);
   scene.fog = new THREE.Fog(0xa9d9ed, 95, 390);
   const camera = new THREE.PerspectiveCamera(68, 1, .1, 500);
   camera.position.set(0, 2.3, 8);
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, matchMedia('(pointer: coarse)').matches ? 1.35 : 1.75));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.08;
   mount.appendChild(renderer.domElement);
-  const hemi = new THREE.HemisphereLight(0xeafaff, 0x55734a, 1.55); scene.add(hemi);
-  const sun = new THREE.DirectionalLight(0xfff1d1, 2.25); sun.position.set(-30, 45, 25); sun.castShadow = true; scene.add(sun);
+  const hemi = new THREE.HemisphereLight(0xeafaff, 0x55734a, 1.1); scene.add(hemi);
+  const sun = new THREE.DirectionalLight(0xffedcf, 3.1); sun.position.set(-38, 58, 32); sun.castShadow = true; sun.shadow.mapSize.set(2048,2048); sun.shadow.camera.left=-42; sun.shadow.camera.right=42; sun.shadow.camera.top=38; sun.shadow.camera.bottom=-38; sun.shadow.camera.near=.5; sun.shadow.camera.far=150; sun.shadow.bias=-.00022; sun.shadow.normalBias=.035; sun.shadow.radius=4; scene.add(sun);
+  const environmentCanvas=document.createElement('canvas');environmentCanvas.width=1024;environmentCanvas.height=512;const envCtx=environmentCanvas.getContext('2d');const envGradient=envCtx.createLinearGradient(0,0,0,512);envGradient.addColorStop(0,'#789da9');envGradient.addColorStop(.45,'#dce9d9');envGradient.addColorStop(.51,'#fff3d5');envGradient.addColorStop(.57,'#727c5a');envGradient.addColorStop(1,'#394535');envCtx.fillStyle=envGradient;envCtx.fillRect(0,0,1024,512);envCtx.fillStyle='#fff7df';envCtx.fillRect(130,242,280,5);envCtx.fillRect(670,266,190,3);const environment=new THREE.CanvasTexture(environmentCanvas);environment.mapping=THREE.EquirectangularReflectionMapping;scene.environment=environment;
+  let composer=null,depthOfField=null;try{composer=new THREE.EffectComposer(renderer);composer.addPass(new THREE.RenderPass(scene,camera));depthOfField=new THREE.BokehPass(scene,camera,{focus:8,aperture:.000008,maxblur:.002,width:mount.clientWidth,height:mount.clientHeight});composer.addPass(depthOfField);composer.addPass(new THREE.UnrealBloomPass(new THREE.Vector2(mount.clientWidth,mount.clientHeight),.42,.35,.82));}catch(error){console.warn('Post-processing is unavailable; using the standard renderer.',error);composer=null;}
 
   const plane = new THREE.Group(); scene.add(plane);
   const mat = (color, metalness=0, roughness=.55) => new THREE.MeshStandardMaterial({color,metalness,roughness});
-  const bodyMat=mat(0xaeb9c2,.5,.38), glass=mat(0x112b41,.72,.16), dark=mat(0x202b35,.25,.42);
+  const bodyMat=new THREE.MeshStandardMaterial({color:0xb6c1c8,metalness:.82,roughness:.3});const glass=new THREE.MeshPhysicalMaterial({color:0x17374c,metalness:.48,roughness:.12,clearcoat:.9,clearcoatRoughness:.08});const dark=mat(0x202b35,.38,.42);
+  function makeAircraftSurfaceMaps(){const size=1024,albedo=document.createElement('canvas'),rough=document.createElement('canvas'),bump=document.createElement('canvas');[albedo,rough,bump].forEach(canvas=>{canvas.width=canvas.height=size;});const a=albedo.getContext('2d'),r=rough.getContext('2d'),b=bump.getContext('2d');a.fillStyle='#b7c2c8';a.fillRect(0,0,size,size);r.fillStyle='#777';r.fillRect(0,0,size,size);b.fillStyle='#808080';b.fillRect(0,0,size,size);for(let y=32;y<size;y+=128){a.strokeStyle='rgba(63,78,88,.38)';a.lineWidth=2;a.beginPath();a.moveTo(0,y);a.lineTo(size,y);a.stroke();r.strokeStyle='#aaa';r.lineWidth=3;r.beginPath();r.moveTo(0,y);r.lineTo(size,y);r.stroke();b.strokeStyle='#aaa';b.lineWidth=3;b.beginPath();b.moveTo(0,y);b.lineTo(size,y);b.stroke();}for(let y=18;y<size;y+=64)for(let x=18;x<size;x+=64){a.fillStyle='#697680';a.beginPath();a.arc(x,y,2.2,0,Math.PI*2);a.fill();b.fillStyle='#c7c7c7';b.beginPath();b.arc(x,y,2,0,Math.PI*2);b.fill();}for(let i=0;i<2400;i++){const x=Math.random()*size,y=Math.random()*size;a.fillStyle=`rgba(65,78,84,${Math.random()*.08})`;a.fillRect(x,y,1+Math.random()*7,1);}const map=new THREE.CanvasTexture(albedo),roughnessMap=new THREE.CanvasTexture(rough),bumpMap=new THREE.CanvasTexture(bump);[map,roughnessMap,bumpMap].forEach(texture=>{texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.anisotropy=renderer.capabilities.getMaxAnisotropy();});map.encoding=THREE.sRGBEncoding;return {map,roughnessMap,bumpMap};}const aircraftMaps=makeAircraftSurfaceMaps();bodyMat.map=aircraftMaps.map;bodyMat.roughnessMap=aircraftMaps.roughnessMap;bodyMat.bumpMap=aircraftMaps.bumpMap;bodyMat.bumpScale=.018;
+  const aircraftProfiles=[{name:'KF-21',color:0xb6c1c8,wing:1,fin:1},{name:'F-16',color:0x71858a,wing:.88,fin:.72},{name:'F-15',color:0xc1bba9,wing:1.08,fin:1.14},{name:'F-35',color:0x596c79,wing:.94,fin:.86},{name:'F-22',color:0x73808b,wing:1.02,fin:.95}];let selectedAircraft=0;
   function mesh(geometry, material, parent=plane, pos=[0,0,0], scale=null) { const o=new THREE.Mesh(geometry,material); o.position.set(...pos); if(scale)o.scale.set(...scale);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o; }
   const fuselageStations=[[-3.75,.035,.045],[-3.1,.12,.13],[-2.25,.23,.22],[-1.15,.38,.34],[-.25,.55,.42],[.8,.58,.43],[1.65,.48,.38],[2.45,.39,.31],[3.05,.3,.26],[3.35,.2,.2]];
-  const fuselageGeometry=new THREE.BufferGeometry(),fuselageVertices=[],fuselageIndices=[],sides=20;
-  fuselageStations.forEach(([z,rx,ry])=>{for(let i=0;i<sides;i++){const a=i/sides*Math.PI*2;fuselageVertices.push(Math.cos(a)*rx,Math.sin(a)*ry,z);}});
+  const fuselageGeometry=new THREE.BufferGeometry(),fuselageVertices=[],fuselageUvs=[],fuselageIndices=[],sides=40;
+  fuselageStations.forEach(([z,rx,ry],ring)=>{for(let i=0;i<sides;i++){const a=i/sides*Math.PI*2;fuselageVertices.push(Math.cos(a)*rx,Math.sin(a)*ry,z);fuselageUvs.push(i/sides,ring/(fuselageStations.length-1));}});
   for(let ring=0;ring<fuselageStations.length-1;ring++)for(let i=0;i<sides;i++){const a=ring*sides+i,b=ring*sides+(i+1)%sides,c=(ring+1)*sides+(i+1)%sides,d=(ring+1)*sides+i;fuselageIndices.push(a,b,d,b,c,d);}
-  fuselageGeometry.setAttribute('position',new THREE.Float32BufferAttribute(fuselageVertices,3));fuselageGeometry.setIndex(fuselageIndices);fuselageGeometry.computeVertexNormals();bodyMat.side=THREE.DoubleSide;mesh(fuselageGeometry,bodyMat);
+  fuselageGeometry.setAttribute('position',new THREE.Float32BufferAttribute(fuselageVertices,3));fuselageGeometry.setAttribute('uv',new THREE.Float32BufferAttribute(fuselageUvs,2));fuselageGeometry.setIndex(fuselageIndices);fuselageGeometry.computeVertexNormals();bodyMat.side=THREE.DoubleSide;mesh(fuselageGeometry,bodyMat);
   function aircraftSurface(points,material,y=0){const shape=new THREE.Shape();shape.moveTo(points[0][0],points[0][1]);for(let i=1;i<points.length;i++)shape.lineTo(points[i][0],points[i][1]);shape.closePath();const geometry=new THREE.ExtrudeGeometry(shape,{depth:.11,bevelEnabled:true,bevelSegments:1,steps:1,bevelSize:.055,bevelThickness:.035});const wing=mesh(geometry,material,plane,[0,y,0]);wing.rotation.x=Math.PI/2;return wing;}
   const wingMat=mat(0x9da9b2,.48,.4);wingMat.side=THREE.DoubleSide;
-  aircraftSurface([[-1.35,-1.75],[-4.65,-.55],[-4.25,.32],[-1.85,1.2],[-1.15,2.0],[1.15,2.0],[1.85,1.2],[4.25,.32],[4.65,-.55],[1.35,-1.75]],wingMat,.12);
-  aircraftSurface([[-.55,1.35],[-1.8,2.15],[-1.65,2.75],[-.55,2.45],[.55,2.45],[1.65,2.75],[1.8,2.15],[.55,1.35]],wingMat,.12);
+  const wingSurfaces=[];wingSurfaces.push(aircraftSurface([[-1.35,-1.75],[-4.65,-.55],[-4.25,.32],[-1.85,1.2],[-1.15,2.0],[1.15,2.0],[1.85,1.2],[4.25,.32],[4.65,-.55],[1.35,-1.75]],wingMat,.12));
+  wingSurfaces.push(aircraftSurface([[-.55,1.35],[-1.8,2.15],[-1.65,2.75],[-.55,2.45],[.55,2.45],[1.65,2.75],[1.8,2.15],[.55,1.35]],wingMat,.12));
   mesh(new THREE.SphereGeometry(.34,24,18),glass,plane,[0,.35,-1.65],[.77,.68,2.05]);
-  for(const side of [-1,1]){
+  const tailFins=[];for(const side of [-1,1]){
     const inlet=mesh(new THREE.BoxGeometry(.16,.52,.66),dark,plane,[side*.66,-.08,-.62]);inlet.rotation.z=side*.12;
     const engine=mesh(new THREE.CylinderGeometry(.27,.33,2.05,18,1),bodyMat,plane,[side*.48,-.2,1.62]);engine.rotation.x=Math.PI/2;
     const nozzle=mesh(new THREE.CylinderGeometry(.31,.35,.34,18,1,true),dark,plane,[side*.48,-.2,2.82]);nozzle.rotation.x=Math.PI/2;
     const exhaustMat=new THREE.MeshStandardMaterial({color:0x78ddff,emissive:0x2299ff,emissiveIntensity:.85,transparent:true,opacity:.85});
     const exhaust=mesh(new THREE.ConeGeometry(.2,.72,12),exhaustMat,plane,[side*.48,-.2,3.28]);exhaust.rotation.x=Math.PI/2;exhaust.userData.base=.85;plane.userData.exhausts??=[];plane.userData.exhausts.push(exhaust);
-    const finShape=new THREE.Shape();finShape.moveTo(-.9,0);finShape.lineTo(-2.8,.08);finShape.lineTo(-2.08,1.2);finShape.lineTo(-1.14,1.0);finShape.closePath();const fin=new THREE.Mesh(new THREE.ShapeGeometry(finShape),bodyMat);fin.position.set(side*.68,.2,0);fin.rotation.y=Math.PI/2;fin.material.side=THREE.DoubleSide;fin.castShadow=true;plane.add(fin);fin.rotation.z=side*.15;
+    const finShape=new THREE.Shape();finShape.moveTo(-.9,0);finShape.lineTo(-2.8,.08);finShape.lineTo(-2.08,1.2);finShape.lineTo(-1.14,1.0);finShape.closePath();const fin=new THREE.Mesh(new THREE.ShapeGeometry(finShape),bodyMat);fin.position.set(side*.68,.2,0);fin.rotation.y=Math.PI/2;fin.material.side=THREE.DoubleSide;fin.castShadow=true;plane.add(fin);fin.rotation.z=side*.15;tailFins.push(fin);
     mesh(new THREE.CylinderGeometry(.23,.23,.035,24),mat(0x285b99,.18,.5),plane,[side*2.7,.15,.15]);
     mesh(new THREE.CylinderGeometry(.095,.095,.04,20),mat(0xc84c4c,.1,.5),plane,[side*2.7,.18,.15]);
     mesh(new THREE.BoxGeometry(.12,.1,.42),mat(side<0?0x4fe2a0:0xff5555,.1,.35),plane,[side*4.42,.17,-.35]);
+    const pylon=mesh(new THREE.BoxGeometry(.18,.2,1.1),mat(0x87949a,.62,.34),plane,[side*2.65,-.04,-.5]);pylon.rotation.y=side*.05;const missile=mesh(new THREE.ConeGeometry(.09,.92,12),mat(0xd7dce0,.7,.26),plane,[side*2.65,-.12,-.1]);missile.rotation.x=Math.PI/2;
   }
+  for(let side of [-1,1]){for(let i=0;i<7;i++){const antenna=mesh(new THREE.BoxGeometry(.07,.045,.42),mat(0x65727b,.48,.48),plane,[side*(1.5+i*.28),.205,.25+i*.17]);antenna.rotation.y=side*.12;}const wingLight=mesh(new THREE.SphereGeometry(.075,12,8),mat(side<0?0x42e5b4:0xff463d,.1,.28),plane,[side*4.35,.21,-.28]);wingLight.material.emissive.setHex(side<0?0x16caa2:0xd7211d);wingLight.material.emissiveIntensity=.8;}
 
   function makeGrassTexture(){
     const canvas=document.createElement('canvas');canvas.width=canvas.height=512;const ctx=canvas.getContext('2d');
@@ -67,6 +74,7 @@
     const texture=new THREE.CanvasTexture(canvas);texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(64,64);texture.encoding=THREE.sRGBEncoding;texture.anisotropy=renderer.capabilities.getMaxAnisotropy();return texture;
   }
   const groundMaterial=mat(0xffffff,0,.98);groundMaterial.map=makeGrassTexture();
+  const earthLoader=new THREE.TextureLoader();earthLoader.setCrossOrigin('anonymous');earthLoader.load('https://svs.gsfc.nasa.gov/vis/a000000/a002900/a002915/bluemarble-2048.png',satellite=>{satellite.encoding=THREE.sRGBEncoding;satellite.mapping=THREE.EquirectangularReflectionMapping;scene.background=satellite;const terrain=satellite.clone();terrain.mapping=THREE.UVMapping;terrain.wrapS=terrain.wrapT=THREE.RepeatWrapping;terrain.repeat.set(12,12);terrain.anisotropy=renderer.capabilities.getMaxAnisotropy();groundMaterial.map=terrain;groundMaterial.roughness=.94;groundMaterial.needsUpdate=true;},undefined,()=>{});
   const groundGeometry=new THREE.PlaneGeometry(1800,1800,110,110),groundVertices=groundGeometry.attributes.position;
   for(let i=0;i<groundVertices.count;i++){const x=groundVertices.getX(i),z=groundVertices.getY(i);const hill=Math.sin(x*.008)*1.1+Math.cos(z*.01)*.8+Math.sin((x-z)*.004)*1.25;groundVertices.setZ(i,hill);}
   groundGeometry.computeVertexNormals();const ground=mesh(groundGeometry,groundMaterial,scene,[0,-42,0]);ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;
@@ -182,6 +190,8 @@
   audioToggle.addEventListener('click',()=>{soundEnabled=!soundEnabled;audioToggle.setAttribute('aria-pressed',String(soundEnabled));audioToggle.setAttribute('aria-label',soundEnabled?'음악과 효과음 끄기':'음악과 효과음 켜기');audioToggle.textContent=soundEnabled?'♫':'♪';if(!soundEnabled){stopFlightAudio();effectAudio.pause();}else{if(running&&!paused)playAudio(engineAudio);playAudio(musicAudio);}});
   audioToggle.addEventListener('click',()=>{if(!soundEnabled&&'speechSynthesis' in window)speechSynthesis.cancel();});
   speedStageButtons.forEach(button=>button.addEventListener('click',()=>{speedStage=Number(button.dataset.speedStage);speedStageButtons.forEach(option=>option.setAttribute('aria-pressed',String(option===button)));}));
+  function selectAircraft(index){selectedAircraft=index;const profile=aircraftProfiles[index];bodyMat.color.setHex(profile.color);wingMat.color.setHex(Math.min(0xffffff,profile.color+0x070707));wingSurfaces[0].scale.x=profile.wing;wingSurfaces[1].scale.x=1+(profile.wing-1)*.7;tailFins.forEach((fin,i)=>{fin.scale.y=profile.fin;fin.position.x=(i?1:-1)*(.68+(profile.fin-1)*.22);});aircraftChoices.forEach((button,i)=>{button.classList.toggle('selected',i===index);button.setAttribute('aria-pressed',String(i===index));});}
+  aircraftChoices.forEach(button=>button.addEventListener('click',()=>selectAircraft(Number(button.dataset.aircraft))));
   const touchButtons=document.querySelectorAll('.touch-key');
   function releaseTouch(e){touchPresses.delete(e.pointerId);e.currentTarget.classList.remove('is-pressed');}
   touchButtons.forEach(button=>{
@@ -200,7 +210,7 @@
   const routeLength=3200;
   bestEl.textContent=String(best).padStart(4,'0');
   const state={x:0,y:0,vx:0,vy:0};
-  function resize(){const w=mount.clientWidth,h=mount.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();plane.scale.setScalar(camera.aspect<.72?.43:.88);}
+  function resize(){const w=mount.clientWidth,h=mount.clientHeight;renderer.setSize(w,h,false);if(composer)composer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();plane.scale.setScalar(camera.aspect<.72?.43:.88);}
   addEventListener('resize',resize);resize();
   addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();keys[e.key.toLowerCase()]=true;if(!e.repeat&&['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].includes(e.key.toLowerCase()))playTouchEffect();if(e.code==='Space'&&running){paused=!paused;if(paused){stopFlightAudio();overlay.classList.remove('hidden');title.innerHTML='잠시 <em>정지</em>';message.innerHTML='준비가 되면 계속 비행하세요.';startButton.innerHTML='계속 비행 <span>→</span>';}else if(soundEnabled){playAudio(engineAudio);playAudio(musicAudio);}}});
   addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
@@ -237,7 +247,7 @@
       landscapes.forEach(g=>{g.position.z+=speed*dt;if(g.position.z>80){const farthest=Math.min(...landscapes.filter(other=>other!==g).map(other=>other.position.z));g.position.z=farthest-395;}});
       birds.forEach(bird=>{bird.position.z+=speed*dt*bird.userData.speed;bird.position.x+=Math.sin(elapsed*bird.userData.drift+bird.userData.phase)*dt*(bird.userData.eagle?2.1:3.1);bird.position.y+=(Math.cos(elapsed*1.5+bird.userData.phase)-.4)*dt*.65;const flap=Math.sin(elapsed*bird.userData.flap+bird.userData.phase)*.62;bird.userData.right.rotation.z=flap;bird.userData.left.rotation.z=-flap;if(bird.position.z>30){bird.position.set((Math.random()-.5)*68,5+Math.random()*13,-230-Math.random()*180);bird.userData.phase=Math.random()*Math.PI*2;}});
     }
-    renderer.render(scene,camera);
+    if(composer){depthOfField.uniforms.focus.value=THREE.MathUtils.lerp(depthOfField.uniforms.focus.value,8,Math.min(1,dt*2));composer.render();}else renderer.render(scene,camera);
   }
   requestAnimationFrame(animate);
 })();

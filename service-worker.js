@@ -1,11 +1,24 @@
-const CACHE_NAME = 'skybound-shell-v1';
+const CACHE_NAME = 'skybound-shell-v2';
 const BASE_URL = self.registration.scope;
 const THREE_URL = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+const EXTERNAL_ASSETS = [
+  THREE_URL,
+  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/Pass.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/shaders/CopyShader.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/shaders/LuminosityHighPassShader.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/shaders/BokehShader.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/ShaderPass.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/EffectComposer.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/RenderPass.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/UnrealBloomPass.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/BokehPass.js',
+  'https://svs.gsfc.nasa.gov/vis/a000000/a002900/a002915/bluemarble-2048.png'
+];
 const CORE_FILES = [
   './index.html',
   './manifest.json',
-  './style.css?v=cafe-menu-color-v3',
-  './script.js?v=cafe-menu-color-v3',
+  './style.css?v=realistic-render-v1',
+  './script.js?v=realistic-render-v1',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png'
@@ -26,10 +39,12 @@ self.addEventListener('install', event => {
         if (response.ok) await cache.put(url, response);
       } catch (_) {}
     }));
-    try {
-      const three = await fetch(THREE_URL, { mode: 'no-cors' });
-      await cache.put(THREE_URL, three);
-    } catch (_) {}
+    await Promise.all(EXTERNAL_ASSETS.map(async url => {
+      try {
+        const response = await fetch(url, { mode: url === THREE_URL ? 'no-cors' : 'cors' });
+        if (response.ok || response.type === 'opaque') await cache.put(url, response);
+      } catch (_) {}
+    }));
     await self.skipWaiting();
   })());
 });
@@ -47,13 +62,13 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
 
-  if (url.href === THREE_URL) {
+  if (EXTERNAL_ASSETS.includes(url.href)) {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
-      const cached = await cache.match(THREE_URL);
+      const cached = await cache.match(url.href);
       if (cached) return cached;
       const response = await fetch(request);
-      if (response.ok || response.type === 'opaque') await cache.put(THREE_URL, response.clone());
+      if (response.ok || response.type === 'opaque') await cache.put(url.href, response.clone());
       return response;
     })());
     return;
