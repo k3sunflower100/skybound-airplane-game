@@ -23,12 +23,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Prepare game and licensed audio
+        run: |
+          mkdir -p dist/audio
+          cp index.html style.css script.js AUDIO_CREDITS.md dist/
+          curl --fail --location --retry 3 --max-time 60 https://assets.mixkit.co/active_storage/sfx/1568/1568-preview.mp3 --output dist/audio/engine-loop.mp3
+          curl --fail --location --retry 3 --max-time 60 https://assets.mixkit.co/active_storage/sfx/2065/2065-preview.mp3 --output dist/audio/ring-bonus.mp3
+          curl --fail --location --retry 3 --max-time 60 https://assets.mixkit.co/active_storage/sfx/689/689-preview.mp3 --output dist/audio/flight-music.mp3
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site
         uses: actions/upload-pages-artifact@v4
         with:
-          path: .
+          path: dist
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4

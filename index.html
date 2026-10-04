@@ -12,9 +12,15 @@
     <div id="game" aria-label="3D 비행기 게임 화면"></div>
     <header class="hud">
       <div class="brand"><span class="brand-mark">✦</span><div><strong>SKYBOUND</strong><small>KF-21 보라매 비행</small></div></div>
-      <div class="stat"><span>점수</span><strong id="score">0000</strong></div>
       <div class="stat"><span>최고 기록</span><strong id="best">0000</strong></div>
+      <button class="audio-toggle" id="audio-toggle" type="button" aria-label="음악과 효과음 끄기" aria-pressed="true">♫</button>
     </header>
+    <div class="score-display" aria-live="polite"><span>현재 점수</span><strong id="score">0000</strong><b id="score-pop" aria-hidden="true"></b></div>
+    <aside class="flight-route" aria-label="사천 출발에서 서울 도착까지 비행 경로">
+      <div class="route-heading"><span>비행 경로</span><b id="route-percent">0%</b></div>
+      <div class="route-track"><i id="route-fill"></i><span id="route-plane">✈</span></div>
+      <div class="route-labels"><span><b>출발</b><small>사천</small></span><span><b>도착</b><small>서울</small></span></div>
+    </aside>
     <div class="crosshair" aria-hidden="true"><i></i><b></b></div>
     <div class="flight-readout"><span>고도 <b id="altitude">1,200</b> m</span><span>속도 <b id="speed">240</b> km/h</span></div>
     <section class="overlay" id="overlay">
