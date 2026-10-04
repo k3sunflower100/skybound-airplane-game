@@ -20,7 +20,7 @@
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x9cc4c8);
-  scene.fog = new THREE.Fog(0xa9d9ed, 95, 390);
+  scene.fog = new THREE.Fog(0xb7c9c2, 95, 390);
   const camera = new THREE.PerspectiveCamera(68, 1, .1, 500);
   camera.position.set(0, 2.3, 8);
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
@@ -38,8 +38,28 @@
 
   const plane = new THREE.Group(); scene.add(plane);
   const mat = (color, metalness=0, roughness=.55) => new THREE.MeshStandardMaterial({color,metalness,roughness});
-  const bodyMat=new THREE.MeshStandardMaterial({color:0xb6c1c8,metalness:.82,roughness:.3});const glass=new THREE.MeshPhysicalMaterial({color:0x17374c,metalness:.48,roughness:.12,clearcoat:.9,clearcoatRoughness:.08});const dark=mat(0x202b35,.38,.42);
-  function makeAircraftSurfaceMaps(){const size=1024,albedo=document.createElement('canvas'),rough=document.createElement('canvas'),bump=document.createElement('canvas');[albedo,rough,bump].forEach(canvas=>{canvas.width=canvas.height=size;});const a=albedo.getContext('2d'),r=rough.getContext('2d'),b=bump.getContext('2d');a.fillStyle='#b7c2c8';a.fillRect(0,0,size,size);r.fillStyle='#777';r.fillRect(0,0,size,size);b.fillStyle='#808080';b.fillRect(0,0,size,size);for(let y=32;y<size;y+=128){a.strokeStyle='rgba(63,78,88,.38)';a.lineWidth=2;a.beginPath();a.moveTo(0,y);a.lineTo(size,y);a.stroke();r.strokeStyle='#aaa';r.lineWidth=3;r.beginPath();r.moveTo(0,y);r.lineTo(size,y);r.stroke();b.strokeStyle='#aaa';b.lineWidth=3;b.beginPath();b.moveTo(0,y);b.lineTo(size,y);b.stroke();}for(let y=18;y<size;y+=64)for(let x=18;x<size;x+=64){a.fillStyle='#697680';a.beginPath();a.arc(x,y,2.2,0,Math.PI*2);a.fill();b.fillStyle='#c7c7c7';b.beginPath();b.arc(x,y,2,0,Math.PI*2);b.fill();}for(let i=0;i<2400;i++){const x=Math.random()*size,y=Math.random()*size;a.fillStyle=`rgba(65,78,84,${Math.random()*.08})`;a.fillRect(x,y,1+Math.random()*7,1);}const map=new THREE.CanvasTexture(albedo),roughnessMap=new THREE.CanvasTexture(rough),bumpMap=new THREE.CanvasTexture(bump);[map,roughnessMap,bumpMap].forEach(texture=>{texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.anisotropy=renderer.capabilities.getMaxAnisotropy();});map.encoding=THREE.sRGBEncoding;return {map,roughnessMap,bumpMap};}const aircraftMaps=makeAircraftSurfaceMaps();bodyMat.map=aircraftMaps.map;bodyMat.roughnessMap=aircraftMaps.roughnessMap;bodyMat.bumpMap=aircraftMaps.bumpMap;bodyMat.bumpScale=.018;
+  const bodyMat=new THREE.MeshPhysicalMaterial({color:0xb6c1c8,metalness:.86,roughness:.58,clearcoat:.2,clearcoatRoughness:.45});const glass=new THREE.MeshPhysicalMaterial({color:0x17374c,metalness:.48,roughness:.12,clearcoat:.9,clearcoatRoughness:.08});const dark=mat(0x202b35,.38,.42);
+  function makeAircraftSurfaceMaps(){
+    const size=2048,albedo=document.createElement('canvas'),rough=document.createElement('canvas'),metal=document.createElement('canvas'),bump=document.createElement('canvas');
+    [albedo,rough,metal,bump].forEach(canvas=>{canvas.width=canvas.height=size;});
+    const a=albedo.getContext('2d'),r=rough.getContext('2d'),m=metal.getContext('2d'),b=bump.getContext('2d');
+    a.fillStyle='#748278';a.fillRect(0,0,size,size);r.fillStyle='#b5b5b5';r.fillRect(0,0,size,size);m.fillStyle='#3f3f3f';m.fillRect(0,0,size,size);b.fillStyle='#808080';b.fillRect(0,0,size,size);
+    const colors=['#68766e','#899187','#586b66','#9a9b8e','#64747a'];
+    for(let patch=0;patch<150;patch++){
+      const cx=Math.random()*size,cy=Math.random()*size,rx=45+Math.random()*180,ry=24+Math.random()*110,points=7+Math.floor(Math.random()*6),jagged=[];
+      for(let i=0;i<points;i++){const angle=i/points*Math.PI*2,radius=.72+Math.random()*.45;jagged.push([cx+Math.cos(angle)*rx*radius,cy+Math.sin(angle)*ry*radius]);}
+      const roughGray=95+Math.floor(Math.random()*100),metalGray=28+Math.floor(Math.random()*70),bumpGray=105+Math.floor(Math.random()*48);
+      const gray=value=>`rgb(${value},${value},${value})`;
+      for(const [ctx,fill] of [[a,colors[Math.floor(Math.random()*colors.length)]],[r,gray(roughGray)],[m,gray(metalGray)],[b,gray(bumpGray)]]){ctx.fillStyle=fill;ctx.beginPath();ctx.moveTo(...jagged[0]);jagged.slice(1).forEach(point=>ctx.lineTo(...point));ctx.closePath();ctx.fill();}
+    }
+    for(let y=30;y<size;y+=128){a.strokeStyle='rgba(37,48,46,.58)';a.lineWidth=2;a.beginPath();a.moveTo(0,y);a.lineTo(size,y);a.stroke();r.strokeStyle='#dedede';r.lineWidth=3;r.beginPath();r.moveTo(0,y);r.lineTo(size,y);r.stroke();m.strokeStyle='#d8d8d8';m.lineWidth=3;m.beginPath();m.moveTo(0,y);m.lineTo(size,y);m.stroke();b.strokeStyle='#aaa';b.lineWidth=3;b.beginPath();b.moveTo(0,y);b.lineTo(size,y);b.stroke();}
+    for(let y=18;y<size;y+=64)for(let x=18;x<size;x+=64){a.fillStyle='#46534e';a.beginPath();a.arc(x,y,2,0,Math.PI*2);a.fill();m.fillStyle='#e6e6e6';m.beginPath();m.arc(x,y,2.2,0,Math.PI*2);m.fill();b.fillStyle='#c7c7c7';b.beginPath();b.arc(x,y,2,0,Math.PI*2);b.fill();}
+    for(let i=0;i<8000;i++){const x=Math.random()*size,y=Math.random()*size;a.fillStyle=`rgba(28,39,37,${Math.random()*.1})`;a.fillRect(x,y,1+Math.random()*11,1);}
+    const map=new THREE.CanvasTexture(albedo),roughnessMap=new THREE.CanvasTexture(rough),metalnessMap=new THREE.CanvasTexture(metal),bumpMap=new THREE.CanvasTexture(bump);
+    [map,roughnessMap,metalnessMap,bumpMap].forEach(texture=>{texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.anisotropy=renderer.capabilities.getMaxAnisotropy();});map.encoding=THREE.sRGBEncoding;
+    return {map,roughnessMap,metalnessMap,bumpMap};
+  }
+  const aircraftMaps=makeAircraftSurfaceMaps();bodyMat.map=aircraftMaps.map;bodyMat.roughnessMap=aircraftMaps.roughnessMap;bodyMat.metalnessMap=aircraftMaps.metalnessMap;bodyMat.bumpMap=aircraftMaps.bumpMap;bodyMat.metalness=.92;bodyMat.roughness=.62;bodyMat.bumpScale=.024;
   const aircraftProfiles=[{name:'KF-21',color:0xb6c1c8,wing:1,fin:1},{name:'F-16',color:0x71858a,wing:.88,fin:.72},{name:'F-15',color:0xc1bba9,wing:1.08,fin:1.14},{name:'F-35',color:0x596c79,wing:.94,fin:.86},{name:'F-22',color:0x73808b,wing:1.02,fin:.95}];let selectedAircraft=0;
   function mesh(geometry, material, parent=plane, pos=[0,0,0], scale=null) { const o=new THREE.Mesh(geometry,material); o.position.set(...pos); if(scale)o.scale.set(...scale);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o; }
   const fuselageStations=[[-3.75,.035,.045],[-3.1,.12,.13],[-2.25,.23,.22],[-1.15,.38,.34],[-.25,.55,.42],[.8,.58,.43],[1.65,.48,.38],[2.45,.39,.31],[3.05,.3,.26],[3.35,.2,.2]];
@@ -48,7 +68,7 @@
   for(let ring=0;ring<fuselageStations.length-1;ring++)for(let i=0;i<sides;i++){const a=ring*sides+i,b=ring*sides+(i+1)%sides,c=(ring+1)*sides+(i+1)%sides,d=(ring+1)*sides+i;fuselageIndices.push(a,b,d,b,c,d);}
   fuselageGeometry.setAttribute('position',new THREE.Float32BufferAttribute(fuselageVertices,3));fuselageGeometry.setAttribute('uv',new THREE.Float32BufferAttribute(fuselageUvs,2));fuselageGeometry.setIndex(fuselageIndices);fuselageGeometry.computeVertexNormals();bodyMat.side=THREE.DoubleSide;mesh(fuselageGeometry,bodyMat);
   function aircraftSurface(points,material,y=0){const shape=new THREE.Shape();shape.moveTo(points[0][0],points[0][1]);for(let i=1;i<points.length;i++)shape.lineTo(points[i][0],points[i][1]);shape.closePath();const geometry=new THREE.ExtrudeGeometry(shape,{depth:.11,bevelEnabled:true,bevelSegments:1,steps:1,bevelSize:.055,bevelThickness:.035});const wing=mesh(geometry,material,plane,[0,y,0]);wing.rotation.x=Math.PI/2;return wing;}
-  const wingMat=mat(0x9da9b2,.48,.4);wingMat.side=THREE.DoubleSide;
+  const wingMat=mat(0x9da9b2,.92,.62);wingMat.map=aircraftMaps.map;wingMat.roughnessMap=aircraftMaps.roughnessMap;wingMat.metalnessMap=aircraftMaps.metalnessMap;wingMat.bumpMap=aircraftMaps.bumpMap;wingMat.bumpScale=.016;wingMat.side=THREE.DoubleSide;
   const wingSurfaces=[];wingSurfaces.push(aircraftSurface([[-1.35,-1.75],[-4.65,-.55],[-4.25,.32],[-1.85,1.2],[-1.15,2.0],[1.15,2.0],[1.85,1.2],[4.25,.32],[4.65,-.55],[1.35,-1.75]],wingMat,.12));
   wingSurfaces.push(aircraftSurface([[-.55,1.35],[-1.8,2.15],[-1.65,2.75],[-.55,2.45],[.55,2.45],[1.65,2.75],[1.8,2.15],[.55,1.35]],wingMat,.12));
   mesh(new THREE.SphereGeometry(.34,24,18),glass,plane,[0,.35,-1.65],[.77,.68,2.05]);
@@ -74,7 +94,16 @@
     const texture=new THREE.CanvasTexture(canvas);texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(64,64);texture.encoding=THREE.sRGBEncoding;texture.anisotropy=renderer.capabilities.getMaxAnisotropy();return texture;
   }
   const groundMaterial=mat(0xffffff,0,.98);groundMaterial.map=makeGrassTexture();
-  const earthLoader=new THREE.TextureLoader();earthLoader.setCrossOrigin('anonymous');earthLoader.load('https://svs.gsfc.nasa.gov/vis/a000000/a002900/a002915/bluemarble-2048.png',satellite=>{satellite.encoding=THREE.sRGBEncoding;satellite.mapping=THREE.EquirectangularReflectionMapping;scene.background=satellite;const terrain=satellite.clone();terrain.mapping=THREE.UVMapping;terrain.wrapS=terrain.wrapT=THREE.RepeatWrapping;terrain.repeat.set(12,12);terrain.anisotropy=renderer.capabilities.getMaxAnisotropy();groundMaterial.map=terrain;groundMaterial.roughness=.94;groundMaterial.needsUpdate=true;},undefined,()=>{});
+  const terrainPhotoLoader=new THREE.TextureLoader();
+  Promise.all(['./textures/grand-canyon-landsat.jpg','./textures/australia-red-center.jpg','./textures/uluru-landsat.jpg'].map(url=>new Promise((resolve,reject)=>terrainPhotoLoader.load(url,resolve,undefined,reject)))).then(([canyon,redCenter,uluru])=>{
+    const atlas=document.createElement('canvas');atlas.width=atlas.height=2048;const ctx=atlas.getContext('2d');
+    ctx.drawImage(canyon.image,0,0,1024,1024);
+    const red=redCenter.image;ctx.drawImage(red,0,450,red.width,Math.min(red.width,red.height-450),1024,0,1024,1024);
+    const redLowerY=Math.min(2700,red.height-red.width);ctx.drawImage(red,0,redLowerY,red.width,Math.min(red.width,red.height-redLowerY),0,1024,1024,1024);
+    ctx.drawImage(uluru.image,0,0,uluru.image.width,uluru.image.height,1024,1024,1024,1024);
+    const terrain=new THREE.CanvasTexture(atlas);terrain.wrapS=terrain.wrapT=THREE.RepeatWrapping;terrain.repeat.set(2,2);terrain.encoding=THREE.sRGBEncoding;terrain.anisotropy=renderer.capabilities.getMaxAnisotropy();groundMaterial.map=terrain;groundMaterial.roughness=.96;groundMaterial.needsUpdate=true;
+  }).catch(error=>console.warn('Satellite terrain photos could not be loaded; showing the procedural terrain fallback.',error));
+  if(THREE.RGBELoader){new THREE.RGBELoader().setDataType(THREE.UnsignedByteType).load('./textures/cloud-layers-2k.hdr',sky=>{sky.mapping=THREE.EquirectangularReflectionMapping;scene.background=sky;const pmrem=new THREE.PMREMGenerator(renderer);pmrem.compileEquirectangularShader();scene.environment=pmrem.fromEquirectangular(sky).texture;pmrem.dispose();},undefined,error=>console.warn('HDR skybox could not be loaded; showing the procedural sky fallback.',error));}
   const groundGeometry=new THREE.PlaneGeometry(1800,1800,110,110),groundVertices=groundGeometry.attributes.position;
   for(let i=0;i<groundVertices.count;i++){const x=groundVertices.getX(i),z=groundVertices.getY(i);const hill=Math.sin(x*.008)*1.1+Math.cos(z*.01)*.8+Math.sin((x-z)*.004)*1.25;groundVertices.setZ(i,hill);}
   groundGeometry.computeVertexNormals();const ground=mesh(groundGeometry,groundMaterial,scene,[0,-42,0]);ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;

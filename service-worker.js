@@ -1,4 +1,4 @@
-const CACHE_NAME = 'skybound-shell-v2';
+const CACHE_NAME = 'skybound-shell-v3';
 const BASE_URL = self.registration.scope;
 const THREE_URL = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 const EXTERNAL_ASSETS = [
@@ -12,13 +12,17 @@ const EXTERNAL_ASSETS = [
   'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/RenderPass.js',
   'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/UnrealBloomPass.js',
   'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/BokehPass.js',
-  'https://svs.gsfc.nasa.gov/vis/a000000/a002900/a002915/bluemarble-2048.png'
+  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/RGBELoader.js'
 ];
 const CORE_FILES = [
   './index.html',
   './manifest.json',
-  './style.css?v=realistic-render-v1',
-  './script.js?v=realistic-render-v1',
+  './style.css?v=realistic-terrain-v2',
+  './script.js?v=realistic-terrain-v2',
+  './textures/grand-canyon-landsat.jpg',
+  './textures/australia-red-center.jpg',
+  './textures/uluru-landsat.jpg',
+  './textures/cloud-layers-2k.hdr',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png'

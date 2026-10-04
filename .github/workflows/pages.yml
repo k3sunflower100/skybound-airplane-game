@@ -25,9 +25,10 @@ jobs:
         uses: actions/checkout@v6
       - name: Prepare game and licensed audio
         run: |
-          mkdir -p dist/audio dist/icons
+          mkdir -p dist/audio dist/icons dist/textures
           cp index.html style.css script.js manifest.json service-worker.js AUDIO_CREDITS.md GRAPHICS_CREDITS.md dist/
           cp icons/*.png dist/icons/
+          cp textures/grand-canyon-landsat.jpg textures/australia-red-center.jpg textures/uluru-landsat.jpg textures/cloud-layers-2k.hdr dist/textures/
           curl --fail --location --retry 3 --max-time 60 https://assets.mixkit.co/active_storage/sfx/1568/1568-preview.mp3 --output dist/audio/engine-loop.mp3
           curl --fail --location --retry 3 --max-time 60 https://assets.mixkit.co/active_storage/sfx/2065/2065-preview.mp3 --output dist/audio/ring-bonus.mp3
           curl --fail --location --retry 3 --max-time 60 https://assets.mixkit.co/active_storage/sfx/689/689-preview.mp3 --output dist/audio/flight-music.mp3
