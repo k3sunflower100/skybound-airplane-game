@@ -1,0 +1,32 @@
+{
+  "id": "./",
+  "name": "Skybound · KF-21 보라매 비행",
+  "short_name": "Skybound",
+  "description": "KF-21 보라매를 조종해 초원을 누비는 3D 비행 게임",
+  "lang": "ko-KR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#10251d",
+  "theme_color": "#6fae63",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
