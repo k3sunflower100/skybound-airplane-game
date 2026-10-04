@@ -118,36 +118,42 @@
     {name:'크루아상',kind:'bread',color:0xe6a34f},
     {name:'카푸치노',kind:'latte',color:0xb88558}
   ];let nextMenuIndex=0;
+  function menuMaterial(color,intensity=.18,roughness=.42){return new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:intensity,roughness});}
   function disposeMenuItem(item){item.traverse(object=>{if(object.geometry)object.geometry.dispose();const materials=Array.isArray(object.material)?object.material:[object.material];materials.forEach(material=>{if(material){if(material.map)material.map.dispose();material.dispose();}});});item.clear();}
+  function addMenuGlow(item,entry){
+    const canvas=document.createElement('canvas');canvas.width=canvas.height=128;const ctx=canvas.getContext('2d'),hex=entry.color.toString(16).padStart(6,'0'),red=parseInt(hex.slice(0,2),16),green=parseInt(hex.slice(2,4),16),blue=parseInt(hex.slice(4,6),16);
+    const gradient=ctx.createRadialGradient(64,64,4,64,64,64);gradient.addColorStop(0,`rgba(${red},${green},${blue},.42)`);gradient.addColorStop(.55,`rgba(${red},${green},${blue},.18)`);gradient.addColorStop(1,`rgba(${red},${green},${blue},0)`);ctx.fillStyle=gradient;ctx.fillRect(0,0,128,128);
+    const texture=new THREE.CanvasTexture(canvas);texture.encoding=THREE.sRGBEncoding;const halo=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));halo.position.set(0,.25,-1.15);halo.scale.set(4.6,4.6,1);item.add(halo);
+  }
   function addMenuBadge(item,entry){
     const canvas=document.createElement('canvas');canvas.width=512;canvas.height=128;const ctx=canvas.getContext('2d');
-    ctx.fillStyle='rgba(10,24,30,.9)';ctx.fillRect(8,8,496,112);ctx.strokeStyle=`#${entry.color.toString(16).padStart(6,'0')}`;ctx.lineWidth=7;ctx.strokeRect(8,8,496,112);
-    ctx.font='700 48px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=7;ctx.strokeStyle='#101c1d';ctx.strokeText(entry.name,256,66,460);ctx.fillStyle='#fff9e8';ctx.fillText(entry.name,256,66,460);
+    ctx.fillStyle='rgba(255,247,220,.96)';ctx.fillRect(8,8,496,112);ctx.strokeStyle=`#${entry.color.toString(16).padStart(6,'0')}`;ctx.lineWidth=9;ctx.strokeRect(8,8,496,112);
+    ctx.font='700 48px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=5;ctx.strokeStyle='#fff9e8';ctx.strokeText(entry.name,256,66,460);ctx.fillStyle='#23313a';ctx.fillText(entry.name,256,66,460);
     const texture=new THREE.CanvasTexture(canvas);texture.encoding=THREE.sRGBEncoding;const badge=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthWrite:false}));badge.position.y=1.75;badge.scale.set(4.15,1.04,1);item.add(badge);
   }
   function addCup(item,entry,mint=false){
-    const paper=mat(mint?0xe6fff4:0xfff5e6,0,.36),sleeve=mat(entry.color,0,.58),lid=mat(mint?0x71e0bc:0xfdf3d8,0,.3);
+    const paper=menuMaterial(mint?0xe6fff4:0xfff5e6,.1,.36),sleeve=menuMaterial(entry.color,.3,.46),lid=menuMaterial(mint?0x71e0bc:0xfdf3d8,.08,.3);
     mesh(new THREE.CylinderGeometry(.61,.45,1.42,24),paper,item,[0,0,0]);
     mesh(new THREE.CylinderGeometry(.62,.47,.48,24,1,true),sleeve,item,[0,-.16,.01]);
-    mesh(new THREE.CylinderGeometry(.56,.56,.045,24),mat(mint?0x6ad0a4:0x6f3e25,0,.3),item,[0,.73,0]);
+    mesh(new THREE.CylinderGeometry(.56,.56,.045,24),menuMaterial(mint?0x6ad0a4:0x6f3e25,.16,.3),item,[0,.73,0]);
     mesh(new THREE.CylinderGeometry(.68,.65,.14,24),lid,item,[0,.82,0]);
-    mesh(new THREE.CylinderGeometry(.58,.58,.035,24),mat(mint?0x6ccfa4:0xf4dfbd,0,.3),item,[0,.905,0]);
-    if(mint){const straw=mesh(new THREE.CylinderGeometry(.055,.055,.95,10),mat(0x42b88f,0,.25),item,[.19,1.28,0]);straw.rotation.z=-.13;for(let i=0;i<3;i++){const leaf=mesh(new THREE.SphereGeometry(.22,12,8),mat(0x39b986,0,.36),item,[-.34+i*.27,1.04+Math.sin(i)*.06,.04],[1.6,.38,.35]);leaf.rotation.z=.35-i*.32;}}
+    mesh(new THREE.CylinderGeometry(.58,.58,.035,24),menuMaterial(mint?0x6ccfa4:0xf4dfbd,.12,.3),item,[0,.905,0]);
+    if(mint){const straw=mesh(new THREE.CylinderGeometry(.055,.055,.95,10),menuMaterial(0x23d49b,.48,.25),item,[.19,1.28,0]);straw.rotation.z=-.13;for(let i=0;i<3;i++){const leaf=mesh(new THREE.SphereGeometry(.22,12,8),menuMaterial(i%2?0x48ed91:0x20c866,.35,.36),item,[-.34+i*.27,1.04+Math.sin(i)*.06,.04],[1.6,.38,.35]);leaf.rotation.z=.35-i*.32;}}
     else {for(let i=0;i<3;i++){const art=mesh(new THREE.SphereGeometry(.16,12,8),mat(i===1?0x9c633b:0xfff9e9,0,.36),item,[-.25+i*.25,.94,.035],[.65,.26,.16]);art.rotation.z=(i-1)*.45;}}
   }
   function addPopcorn(item){
-    mesh(new THREE.CylinderGeometry(.68,.43,1.25,20),mat(0xf9f2df,0,.54),item,[0,-.15,0]);
-    for(let i=0;i<5;i++){const stripe=mesh(new THREE.TorusGeometry(.57-i*.035,.045,6,24),mat(0xe94349,0,.38),item,[0,-.53+i*.2,.01]);stripe.rotation.x=Math.PI/2;}
-    const popcorn=mat(0xffe69b,0,.68);for(let i=0;i<13;i++){const a=i*2.4,r=.38*Math.sqrt(i/13);mesh(new THREE.SphereGeometry(.19+Math.random()*.1,9,7),popcorn,item,[Math.cos(a)*r,.58+Math.random()*.2,Math.sin(a)*r]);}
+    mesh(new THREE.CylinderGeometry(.68,.43,1.25,20),menuMaterial(0xfff4d2,.12,.54),item,[0,-.15,0]);
+    for(let i=0;i<5;i++){const stripe=mesh(new THREE.TorusGeometry(.57-i*.035,.045,6,24),menuMaterial(i%2?0xff355a:0xff5365,.36,.38),item,[0,-.53+i*.2,.01]);stripe.rotation.x=Math.PI/2;}
+    const popcorn=menuMaterial(0xffd43f,.32,.68);for(let i=0;i<13;i++){const a=i*2.4,r=.38*Math.sqrt(i/13);mesh(new THREE.SphereGeometry(.19+Math.random()*.1,9,7),popcorn,item,[Math.cos(a)*r,.58+Math.random()*.2,Math.sin(a)*r]);}
   }
   function addBread(item){
-    const crust=mat(0xd88a3c,0,.67),gold=mat(0xf6c16e,0,.58);
+    const crust=menuMaterial(0xf09a37,.28,.67),gold=menuMaterial(0xffd06a,.2,.58);
     const loaf=mesh(new THREE.SphereGeometry(.75,20,14),crust,item,[0,0,0],[1.38,.68,.78]);loaf.rotation.z=-.08;
     for(let i=-1;i<=1;i++){const cut=mesh(new THREE.SphereGeometry(.12,10,7),gold,item,[i*.49,.5,.31],[1.5,.22,.42]);cut.rotation.z=-.32;}
     for(let side of [-1,1]){const end=mesh(new THREE.SphereGeometry(.36,14,10),gold,item,[side*.78,.04,0],[.5,.72,.73]);}
   }
   function buildMenuItem(item,entry){
-    disposeMenuItem(item);item.userData.entry=entry;item.userData.passed=false;item.userData.phase=Math.random()*Math.PI*2;item.userData.accent=entry.color;
+    disposeMenuItem(item);item.userData.entry=entry;item.userData.passed=false;item.userData.phase=Math.random()*Math.PI*2;item.userData.accent=entry.color;addMenuGlow(item,entry);
     if(entry.kind==='latte')addCup(item,entry,false);else if(entry.kind==='mint')addCup(item,entry,true);else if(entry.kind==='popcorn')addPopcorn(item);else addBread(item);
     addMenuBadge(item,entry);item.scale.setScalar(1.55);
   }
