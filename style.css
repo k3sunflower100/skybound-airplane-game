@@ -74,15 +74,18 @@ button { border:0;border-radius:5px;padding:14px 19px;background:#a8f28d;color:#
   .route-labels b { font-size:9px; }.route-labels small { font-size:8px; }
   .audio-toggle { width:34px;height:34px;font-size:17px; }
 }
-.flight-route { width:min(552px,calc(100vw - 48px));padding:36px 42px 30px;border-radius:26px; }
-.route-heading { font-size:24px; }.route-heading b { font-size:22px; }
-.route-track { height:12px;margin:45px 21px 36px;border-radius:12px; }
-.route-track span { width:38px;height:38px;top:50%;font-size:22px; }
-.route-labels b { font-size:22px; }.route-labels small { font-size:18px; }
+.flight-route { left:24px;top:50%;transform:translateY(-50%);width:220px;height:min(72vh,650px);min-height:400px;padding:27px 22px;border:1px solid #edfff02b;border-radius:20px;background:linear-gradient(180deg,rgba(17,44,37,.3),rgba(13,32,35,.2));box-shadow:0 8px 28px #07142620,inset 0 1px #ffffff18;backdrop-filter:blur(3px); }
+.route-heading { position:relative;z-index:1;font-size:18px; }.route-heading b { font-size:17px; }
+.route-track { position:absolute;top:132px;bottom:94px;left:50%;transform:translateX(-50%);width:10px;height:auto;margin:0;background:#ffffff39;border-radius:10px; }
+.route-track i { inset:0 0 auto;width:100%;height:0;background:linear-gradient(180deg,#a7e979,#80edcf); }
+.route-track:before,.route-track:after { left:50%;transform:translateX(-50%); }.route-track:before { top:-4px; }.route-track:after { top:auto;right:auto;bottom:-4px; }
+.route-track span { top:0;left:50%;transform:translate(-50%,-50%);width:36px;height:36px;font-size:21px;transition:top .2s linear; }
+.route-labels { position:absolute;top:79px;right:12px;bottom:24px;left:12px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;pointer-events:none; }
+.route-labels span,.route-labels span:last-child { display:grid;gap:3px;text-align:center; }.route-labels b { font-size:17px; }.route-labels small { font-size:14px; }
 @media(max-width:760px), (pointer:coarse) {
-  .flight-route { left:9px;width:calc(100vw - 18px);padding:26px 28px 23px;border-radius:20px; }
-  .route-heading { font-size:19px; }.route-heading b { font-size:18px; }
-  .route-track { height:10px;margin:30px 14px 25px; }.route-track span { width:32px;height:32px;font-size:19px; }
-  .route-labels b { font-size:18px; }.route-labels small { font-size:15px; }
+  .flight-route { left:9px;width:180px;height:min(70svh,600px);min-height:360px;padding:22px 17px;border-radius:17px;background:linear-gradient(180deg,rgba(17,44,37,.25),rgba(13,32,35,.16));backdrop-filter:blur(2px); }
+  .route-heading { font-size:15px; }.route-heading b { font-size:14px; }
+  .route-track { top:112px;bottom:81px;width:9px; }.route-track span { width:30px;height:30px;font-size:18px; }
+  .route-labels { top:69px;bottom:20px; }.route-labels b { font-size:15px; }.route-labels small { font-size:12px; }
   .preflight-speed { margin-bottom:18px; }.preflight-speed button { padding:10px 6px;font-size:11px; }
 }
