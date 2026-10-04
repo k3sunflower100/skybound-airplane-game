@@ -1,4 +1,4 @@
-const CACHE_NAME = 'skybound-shell-v5';
+const CACHE_NAME = 'skybound-shell-v6';
 const BASE_URL = self.registration.scope;
 const THREE_URL = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 const EXTERNAL_ASSETS = [
@@ -17,8 +17,8 @@ const EXTERNAL_ASSETS = [
 const CORE_FILES = [
   './index.html',
   './manifest.json',
-  './style.css?v=topgun-hud-v4',
-  './script.js?v=topgun-hud-v4',
+  './style.css?v=topgun-hud-v5',
+  './script.js?v=topgun-hud-v5',
   './textures/grand-canyon-landsat.jpg',
   './textures/mount-mabu-landsat.jpg',
   './textures/sunset-fairway-2k.hdr',

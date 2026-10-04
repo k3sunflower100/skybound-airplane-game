@@ -11,14 +11,14 @@
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
   <link rel="apple-touch-icon" href="./icons/icon-192.png">
-  <link rel="stylesheet" href="style.css?v=topgun-hud-v4">
+  <link rel="stylesheet" href="style.css?v=topgun-hud-v5">
 </head>
 <body>
   <main class="game-shell">
     <div id="game" aria-label="3D 비행기 게임 화면"></div>
     <div class="cinematic-lens" aria-hidden="true"></div>
     <header class="hud">
-      <div class="brand"><span class="brand-mark">◈</span><div><strong>SKYBOUND // TACTICAL</strong><small>LOW-LEVEL SORTIE · PACIFIC AO</small></div></div>
+      <div class="brand"><span class="brand-mark">◈</span><div><strong>SKYBOUND // TACTICAL</strong><small>LOW-LEVEL SORTIE · GRAND CANYON AO</small></div></div>
       <div class="compass-readout"><span>HDG</span><i>W</i><b id="heading-value">284°</b><i>E</i></div>
       <div class="stat"><span>BEST SORTIE</span><strong id="best">0000</strong></div>
       <button class="audio-toggle" id="audio-toggle" type="button" aria-label="음악과 효과음 끄기" aria-pressed="true">♫</button>
@@ -31,14 +31,14 @@
     </div>
     <aside class="flight-route" aria-label="전술 비행 지도 및 경로 지침">
       <div class="route-heading"><span>TACTICAL FLIGHT MAP</span><b id="route-percent">00%</b></div>
-      <div class="map-coordinates"><span>AREA OF OPERATIONS</span><b>37°32′N / 127°01′E</b></div>
+      <div class="map-coordinates"><span>AREA OF OPERATIONS</span><b>USGS LANDSAT / GRAND CANYON</b></div>
       <div class="tactical-map" aria-label="위성 지형 기반 웨이포인트 지도">
         <img src="./textures/grand-canyon-landsat.jpg" alt="위성 지형도">
         <svg viewBox="0 0 160 250" aria-hidden="true"><path class="map-route-line" d="M25 220 C48 188 104 193 89 150 S37 112 62 82 109 55 133 25"/><circle cx="25" cy="220" r="5"/><circle cx="89" cy="150" r="5"/><circle cx="62" cy="82" r="5"/><circle cx="133" cy="25" r="6"/></svg>
         <span class="waypoint waypoint-1">WP 01</span><span class="waypoint waypoint-2">WP 02</span><span class="waypoint waypoint-3">WP 03</span><span class="map-target">TARGET</span>
-        <span class="map-aircraft">▲</span><span class="map-scale">N ↑ &nbsp; 5 NM</span>
+        <span class="map-aircraft" id="map-aircraft">▲</span><span class="map-scale">N ↑ &nbsp; 13 NM</span>
       </div>
-      <div class="route-labels"><span><b>DEPART</b><small>OSAN AB</small></span><span><b>OBJECTIVE</b><small>SEOUL AO</small></span></div>
+      <div class="route-labels"><span><b>DEPART</b><small>SOUTH RIM</small></span><span><b>OBJECTIVE</b><small>NORTH RIM</small></span></div>
       <div class="route-track"><i id="route-fill"></i><span id="route-plane">▲</span></div>
       <div class="route-telemetry">
         <div><span>ALT</span><b><i id="altitude">575</i> FT</b></div><div><span>HDG</span><b id="map-heading">284°</b></div>
@@ -84,7 +84,7 @@
       <div class="panel">
         <div class="eyebrow">MISSION BRIEF // TACTICAL FLIGHT LOG</div>
         <h1 id="title">MISSION: AIR SUPERIORITY</h1>
-        <p id="message">LOW-LEVEL ROUTE · WAYPOINTS 01—03 · PACIFIC AO</p>
+        <p id="message">LOW-LEVEL ROUTE · SOUTH RIM TO NORTH RIM · GRAND CANYON AO</p>
         <div class="preflight-speed" role="group" aria-label="출격 전 속도 단계 선택"><span>출격 전 속도 선택</span><div><button type="button" data-speed-stage="1" aria-pressed="false">1단계</button><button type="button" data-speed-stage="2" aria-pressed="true">2단계</button><button type="button" data-speed-stage="3" aria-pressed="false">3단계</button></div></div>
         <div class="control-hint"><span>W A S D</span> 또는 <span>↑ ← ↓ →</span><small>키보드 조종 · 모바일은 터치 버튼/드래그</small></div>
         <button id="start-button">START SORTIE <span>↗</span></button>
@@ -104,7 +104,7 @@
     <button class="comments-toggle" id="comments-toggle" type="button" aria-expanded="false" aria-controls="comments-drawer">FLIGHT LOG / COMMENTS <span>＋</span></button>
     <section class="comments-drawer" id="comments-drawer" aria-label="비행 댓글" hidden>
       <div class="comments-heading"><div><span>AFTER ACTION</span><b>FLIGHT DEBRIEF / COMMENTS</b></div><button id="comments-close" type="button" aria-label="댓글 닫기">×</button></div>
-      <div class="comments-content"><p id="disqus-setup">Disqus comments need this site's registered shortname. Set <code>data-disqus-shortname</code> on the HTML root after creating the site on Disqus.</p><div id="disqus_thread"></div></div>
+      <div class="comments-content"><p id="disqus-setup">Disqus 댓글 연결에 필요한 사이트 설정이 아직 완료되지 않았습니다.</p><div id="disqus_thread"></div></div>
     </section>
   </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -118,7 +118,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/RenderPass.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/UnrealBloomPass.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/BokehPass.js"></script>
-  <script src="script.js?v=topgun-hud-v4"></script>
+  <script src="script.js?v=topgun-hud-v5"></script>
   <script>
     (() => {
       const drawer = document.getElementById('comments-drawer');
