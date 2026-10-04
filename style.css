@@ -30,6 +30,10 @@ button { border:0;border-radius:5px;padding:14px 19px;background:#a8f28d;color:#
 .speed-selector button[aria-pressed="true"] { background:#b3f58c;color:#17301b;border-color:#e6ffd7;box-shadow:0 0 15px #c0ff9180; }
 .speed-selector button:hover { transform:translateY(-1px); }
 @media(max-width:760px), (pointer:coarse) { .speed-selector { top:156px;right:16px;gap:4px;font-size:9px; }.speed-selector button { min-width:48px;padding:8px 7px;font-size:10px; } }
+.preflight-speed { display:grid;gap:8px;margin:0 0 22px;color:#e9f8e5;font-size:12px;font-weight:600;letter-spacing:.04em; }
+.preflight-speed div { display:flex;gap:8px; }
+.preflight-speed button { flex:1;padding:11px 8px;border:1px solid #e7f8d94a;border-radius:6px;background:#183728b8;color:#f3fff0;font:600 12px Outfit,sans-serif; }
+.preflight-speed button[aria-pressed="true"] { background:#b3f58c;color:#17301b;border-color:#e6ffd7;box-shadow:0 0 15px #c0ff9180; }
 @media(max-width:760px), (pointer:coarse) {
   .game-shell { min-height:100svh;height:100svh; }
   .hud { height:72px;padding:0 18px;gap:17px; }
@@ -69,4 +73,16 @@ button { border:0;border-radius:5px;padding:14px 19px;background:#a8f28d;color:#
   .flight-route { left:9px;width:135px;padding:10px 10px 9px;border-radius:10px; }.route-heading { font-size:10px; }.route-track { margin:13px 6px 10px; }
   .route-labels b { font-size:9px; }.route-labels small { font-size:8px; }
   .audio-toggle { width:34px;height:34px;font-size:17px; }
+}
+.flight-route { width:min(552px,calc(100vw - 48px));padding:36px 42px 30px;border-radius:26px; }
+.route-heading { font-size:24px; }.route-heading b { font-size:22px; }
+.route-track { height:12px;margin:45px 21px 36px;border-radius:12px; }
+.route-track span { width:38px;height:38px;top:50%;font-size:22px; }
+.route-labels b { font-size:22px; }.route-labels small { font-size:18px; }
+@media(max-width:760px), (pointer:coarse) {
+  .flight-route { left:9px;width:calc(100vw - 18px);padding:26px 28px 23px;border-radius:20px; }
+  .route-heading { font-size:19px; }.route-heading b { font-size:18px; }
+  .route-track { height:10px;margin:30px 14px 25px; }.route-track span { width:32px;height:32px;font-size:19px; }
+  .route-labels b { font-size:18px; }.route-labels small { font-size:15px; }
+  .preflight-speed { margin-bottom:18px; }.preflight-speed button { padding:10px 6px;font-size:11px; }
 }
