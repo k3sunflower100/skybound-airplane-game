@@ -1,24 +1,24 @@
-const CACHE_NAME = 'skybound-shell-v6';
+const CACHE_NAME = 'skybound-shell-v7';
 const BASE_URL = self.registration.scope;
 const THREE_URL = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 const EXTERNAL_ASSETS = [
   THREE_URL,
-  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/Pass.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/shaders/CopyShader.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/shaders/LuminosityHighPassShader.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/shaders/BokehShader.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/ShaderPass.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/EffectComposer.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/RenderPass.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/UnrealBloomPass.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/BokehPass.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/RGBELoader.js'
+  'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/Pass.js',
+  'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js',
+  'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js',
+  'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/BokehShader.js',
+  'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js',
+  'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js',
+  'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js',
+  'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js',
+  'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/BokehPass.js',
+  'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/RGBELoader.js'
 ];
 const CORE_FILES = [
   './index.html',
   './manifest.json',
-  './style.css?v=topgun-hud-v5',
-  './script.js?v=topgun-hud-v5',
+  './style.css?v=topgun-hud-v6',
+  './script.js?v=topgun-hud-v6',
   './textures/grand-canyon-landsat.jpg',
   './textures/mount-mabu-landsat.jpg',
   './textures/sunset-fairway-2k.hdr',
