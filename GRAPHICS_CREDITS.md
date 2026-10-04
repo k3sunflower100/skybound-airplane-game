@@ -1,6 +1,7 @@
 # Graphics credits
 
 - Terrain imagery: U.S. Geological Survey, *Landsat 8 - Grand Canyon*, Landsat 8 OLI/TIRS Collection 1 Level-1 (public domain). https://www.usgs.gov/media/images/landsat-8-grand-canyon
+- Forest valley terrain imagery: NASA Earth Observatory, *Mount Mabu, Mozambique* (Landsat 7 ETM+, acquired 8 November 2001). https://science.nasa.gov/earth/earth-observatory/mount-mabu-mozambique-36501/
 - Terrain imagery: NASA Earth Observatory, *A Hawk’s Eye View of Australia’s Red Center* (SeaHawk/HawkEye true-color satellite image, NASA image by Alan Holmes), and *Uluru, Central Australia* (Landsat 7 ETM+). https://science.nasa.gov/earth/earth-observatory/a-hawks-eye-view-of-australias-red-center-148663/ and https://science.nasa.gov/earth/earth-observatory/uluru-central-australia-3136/
 - Skybox and image-based lighting: Greg Zaal / Poly Haven, *Cloud Layers* 2K HDRI (CC0). https://polyhaven.com/a/cloud_layers
 - Post-processing: Three.js r128 example passes (EffectComposer, RenderPass, UnrealBloomPass, BokehPass), distributed under the Three.js MIT license. https://github.com/mrdoob/three.js/blob/r128/LICENSE
