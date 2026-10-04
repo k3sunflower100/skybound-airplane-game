@@ -1,9 +1,9 @@
 ﻿<!doctype html>
-<html lang="ko">
+<html lang="ko" data-disqus-shortname="REPLACE_WITH_DISQUS_SHORTNAME">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#6fae63">
+  <meta name="theme-color" content="#0b1416">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Skybound">
@@ -11,53 +11,83 @@
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
   <link rel="apple-touch-icon" href="./icons/icon-192.png">
-  <link rel="stylesheet" href="style.css?v=low-valley-cinema-v3">
+  <link rel="stylesheet" href="style.css?v=topgun-hud-v4">
 </head>
 <body>
   <main class="game-shell">
     <div id="game" aria-label="3D 비행기 게임 화면"></div>
+    <div class="cinematic-lens" aria-hidden="true"></div>
     <header class="hud">
-      <div class="brand"><span class="brand-mark">✦</span><div><strong>SKYBOUND</strong><small>KF-21 보라매 비행</small></div></div>
-      <div class="stat"><span>최고 기록</span><strong id="best">0000</strong></div>
+      <div class="brand"><span class="brand-mark">◈</span><div><strong>SKYBOUND // TACTICAL</strong><small>LOW-LEVEL SORTIE · PACIFIC AO</small></div></div>
+      <div class="compass-readout"><span>HDG</span><i>W</i><b id="heading-value">284°</b><i>E</i></div>
+      <div class="stat"><span>BEST SORTIE</span><strong id="best">0000</strong></div>
       <button class="audio-toggle" id="audio-toggle" type="button" aria-label="음악과 효과음 끄기" aria-pressed="true">♫</button>
     </header>
-    <div class="score-display" aria-live="polite"><span>현재 점수</span><strong id="score">0000</strong><b id="score-pop" aria-hidden="true"></b></div>
+    <div class="flight-log-banner" id="flight-log">FLIGHT LOG : STANDBY</div>
+    <div class="score-display" aria-live="polite"><span>MISSION SCORE</span><strong id="score">0000</strong><b id="score-pop" aria-hidden="true"></b></div>
     <div class="speed-selector" role="group" aria-label="비행 속도 단계">
-      <span>비행 속도</span>
+      <span>THROTTLE / POWER</span>
       <div><button type="button" data-speed-stage="1" aria-pressed="false">1단계</button><button type="button" data-speed-stage="2" aria-pressed="true">2단계</button><button type="button" data-speed-stage="3" aria-pressed="false">3단계</button></div>
     </div>
-    <aside class="flight-route" aria-label="사천 출발에서 서울 도착까지 비행 경로">
-      <div class="route-heading"><span>비행 경로</span><b id="route-percent">0%</b></div>
-      <div class="route-labels"><span><b>출발</b><small>사천</small></span><span><b>도착</b><small>서울</small></span></div>
-      <div class="route-track"><i id="route-fill"></i><span id="route-plane">✈</span></div>
-    </aside>
-    <aside class="aircraft-picker" aria-label="전투기 선택">
-      <span class="aircraft-picker-title">기체 선택</span>
-      <div class="aircraft-options">
-        <button class="aircraft-choice selected" type="button" data-aircraft="0" aria-pressed="true" aria-label="KF-21 보라매 선택"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 28 19 43 28 42 32 28 27 27 41 33 45 32 47 24 44 16 47 15 45 21 41 20 27 6 32 5 28 20 19z"/></svg><b>KF-21</b></button>
-        <button class="aircraft-choice" type="button" data-aircraft="1" aria-pressed="false" aria-label="F-16 파이팅 팰컨 선택"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 28 20 42 29 41 33 27 28 27 41 32 45 31 47 24 44 17 47 16 45 21 41 21 28 7 33 6 29 20 20z"/></svg><b>F-16</b></button>
-        <button class="aircraft-choice" type="button" data-aircraft="2" aria-pressed="false" aria-label="F-35 라이트닝 선택"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 27 18 39 23 43 30 28 27 27 41 33 45 32 47 24 44 16 47 15 45 21 41 20 27 5 30 9 23 21 18z"/></svg><b>F-35</b></button>
-        <button class="aircraft-choice" type="button" data-aircraft="3" aria-pressed="false" aria-label="AH-64 아파치 헬기 선택"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 10h38v2H5zm19 2v8m-2-2h4m-18 9 4-6h14l5 5v5H10zm19 2h8l5 4H29zM8 35h34v2H8zm8-14 3-8h10l3 8"/></svg><b>AH-64</b><small>아파치</small></button>
-        <button class="aircraft-choice" type="button" data-aircraft="4" aria-pressed="false" aria-label="UH-60 블랙호크 헬기 선택"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 9h38v2H5zm19 2v9m-3-3h6M7 25q1-6 8-6h14q7 1 9 8v5H9q-3-2-2-7zm30 1h7v5h-6M9 35h34v2H9z"/></svg><b>UH-60</b><small>블랙호크</small></button>
+    <aside class="flight-route" aria-label="전술 비행 지도 및 경로 지침">
+      <div class="route-heading"><span>TACTICAL FLIGHT MAP</span><b id="route-percent">00%</b></div>
+      <div class="map-coordinates"><span>AREA OF OPERATIONS</span><b>37°32′N / 127°01′E</b></div>
+      <div class="tactical-map" aria-label="위성 지형 기반 웨이포인트 지도">
+        <img src="./textures/grand-canyon-landsat.jpg" alt="위성 지형도">
+        <svg viewBox="0 0 160 250" aria-hidden="true"><path class="map-route-line" d="M25 220 C48 188 104 193 89 150 S37 112 62 82 109 55 133 25"/><circle cx="25" cy="220" r="5"/><circle cx="89" cy="150" r="5"/><circle cx="62" cy="82" r="5"/><circle cx="133" cy="25" r="6"/></svg>
+        <span class="waypoint waypoint-1">WP 01</span><span class="waypoint waypoint-2">WP 02</span><span class="waypoint waypoint-3">WP 03</span><span class="map-target">TARGET</span>
+        <span class="map-aircraft">▲</span><span class="map-scale">N ↑ &nbsp; 5 NM</span>
       </div>
-      <div class="pilot-selector" aria-label="조종사 선택">
-        <span>조종사 프로필</span>
-        <div class="pilot-preview" id="pilot-preview" aria-label="선택한 조종사 3D 미리보기"></div>
-        <small id="pilot-caption">아시아 · 남성 조종사</small>
-        <b>성별</b><div class="pilot-options gender-options"><button type="button" data-pilot-gender="male" aria-pressed="true">남성</button><button type="button" data-pilot-gender="female" aria-pressed="false">여성</button></div>
-        <b>피부색</b><div class="pilot-options skin-options"><button type="button" data-pilot-skin="asian" aria-pressed="true">아시아</button><button type="button" data-pilot-skin="white" aria-pressed="false">백인</button><button type="button" data-pilot-skin="black" aria-pressed="false">흑인</button></div>
+      <div class="route-labels"><span><b>DEPART</b><small>OSAN AB</small></span><span><b>OBJECTIVE</b><small>SEOUL AO</small></span></div>
+      <div class="route-track"><i id="route-fill"></i><span id="route-plane">▲</span></div>
+      <div class="route-telemetry">
+        <div><span>ALT</span><b><i id="altitude">575</i> FT</b></div><div><span>HDG</span><b id="map-heading">284°</b></div>
+        <div><span>WIND</span><b>265° / 18 KT</b></div><div><span>RANGE</span><b><i id="range-nm">13.0</i> NM</b></div>
+        <div class="eta-cell"><span>ETA</span><b id="eta-minutes">03:18</b></div><div class="map-status"><span>LINK</span><b>● ACTIVE</b></div>
       </div>
     </aside>
+    <button class="selection-toggle" id="selection-toggle" type="button" aria-expanded="true">LOADOUT / PILOT</button>
+    <aside class="aircraft-picker" id="selection-panel" aria-label="기체 및 파일럿 선택">
+      <div class="selection-header"><div><span>PRE-FLIGHT CONFIGURATION</span><b id="selection-title">AIRFRAME SELECT</b></div><button id="selection-close" type="button" aria-label="선택 패널 닫기">×</button></div>
+      <section class="selection-view active" id="aircraft-view" aria-label="기체 선택">
+        <div class="selection-section-title"><span>AIRCRAFT SELECTION</span><button type="button" data-collapse="aircraft-body" aria-label="기체 목록 접기">−</button></div>
+        <div class="selection-body" id="aircraft-body"><div class="aircraft-options">
+          <button class="aircraft-choice selected" type="button" data-aircraft="0" aria-pressed="true" aria-label="KF-21 보라매 선택"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 28 19 43 28 42 32 28 27 27 41 33 45 32 47 24 44 16 47 15 45 21 41 20 27 6 32 5 28 20 19z"/></svg><b>KF-21</b><small>BORAMAE</small></button>
+          <button class="aircraft-choice" type="button" data-aircraft="1" aria-pressed="false" aria-label="F/A-18E 슈퍼 호넷 선택"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 2 28 19 44 27 43 31 28 27 27 42 33 46 24 44 15 46 21 42 20 27 5 31 4 27 20 19z"/></svg><b>F/A-18E</b><small>SUPER HORNET</small></button>
+          <button class="aircraft-choice" type="button" data-aircraft="2" aria-pressed="false" aria-label="F-35C 라이트닝 선택"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 27 18 42 24 45 30 28 27 27 41 33 45 24 44 15 47 21 41 20 27 3 30 6 24 21 18z"/></svg><b>F-35C</b><small>LIGHTNING II</small></button>
+          <button class="aircraft-choice" type="button" data-aircraft="3" aria-pressed="false" aria-label="F-22 랩터 선택"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 2 28 17 43 22 47 29 28 26 27 41 34 46 24 44 14 47 21 41 20 26 1 30 6 22 20 17z"/></svg><b>F-22</b><small>RAPTOR</small></button>
+          <button class="aircraft-choice" type="button" data-aircraft="4" aria-pressed="false" aria-label="F-15E 스트라이크 이글 선택"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 2 28 18 46 26 44 31 28 27 27 41 34 46 24 44 14 47 21 41 20 27 4 31 2 26 20 18z"/></svg><b>F-15E</b><small>STRIKE EAGLE</small></button>
+          <button class="aircraft-choice" type="button" data-aircraft="5" aria-pressed="false" aria-label="AH-64 아파치 헬기 선택"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 10h38v2H5zm19 2v8m-2-2h4m-18 9 4-6h14l5 5v5H10zm19 2h8l5 4H29zM8 35h34v2H8z"/></svg><b>AH-64</b><small>APACHE</small></button>
+          <button class="aircraft-choice" type="button" data-aircraft="6" aria-pressed="false" aria-label="UH-60 블랙호크 헬기 선택"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 9h38v2H5zm19 2v9m-3-3h6M7 25q1-6 8-6h14q7 1 9 8v5H9q-3-2-2-7zm30 1h7v5h-6M9 35h34v2H9z"/></svg><b>UH-60</b><small>BLACK HAWK</small></button>
+        </div></div>
+      </section>
+      <section class="selection-view pilot-roster" id="pilot-view" aria-label="파일럿 선택">
+        <div class="selection-section-title"><span>PILOT SELECTION</span><button type="button" data-collapse="pilot-body" aria-label="파일럿 목록 접기">−</button></div>
+        <div class="selection-body" id="pilot-body"><div class="pilot-roster-grid">
+          <button class="pilot-card" type="button" data-pilot-id="MAVERICK"><img src="./assets/pilots/maverick.jpg" alt="미 해군 전투기 조종사 기록 사진"><span class="pilot-rank">01 / STRIKE</span><b>MAVERICK</b><small>LEAD · VF-81</small></button>
+          <button class="pilot-card" type="button" data-pilot-id="ROOSTER"><img src="./assets/pilots/rooster.jpg" alt="미 해군 전투기 조종사 기록 사진"><span class="pilot-rank">02 / STRIKE</span><b>ROOSTER</b><small>WING · VF-113</small></button>
+          <button class="pilot-card" type="button" data-pilot-id="HANGMAN"><img src="./assets/pilots/phoenix.jpg" alt="미 해군 항공대 조종사 기록 사진"><span class="pilot-rank">03 / STRIKE</span><b>HANGMAN</b><small>WING · VFA-103</small></button>
+          <button class="pilot-card" type="button" data-pilot-id="PAYBACK"><img src="./assets/pilots/payback.jpg" alt="미 해군 전투기 조종사 기록 사진"><span class="pilot-rank">04 / STRIKE</span><b>PAYBACK</b><small>WING · VFA-82</small></button>
+          <button class="pilot-card" type="button" data-pilot-id="PHOENIX"><img src="./assets/pilots/coyote.jpg" alt="미 해군 전투기 조종사 기록 사진"><span class="pilot-rank">05 / STRIKE</span><b>PHOENIX</b><small>LEAD · VAQ-34</small></button>
+        </div>
+        <p class="pilot-photo-note">ARCHIVAL U.S. NAVY PHOTOS · GAME CALLSIGNS ARE FICTIONAL</p>
+        </div>
+      </section>
+      <section class="pilot-profile" aria-label="선택한 파일럿 프로필">
+        <span class="profile-label">PILOT PROFILE / ASSIGNED</span><div class="pilot-profile-content"><img id="pilot-profile-image" src="./assets/pilots/maverick.jpg" alt="선택한 파일럿 사진"><div><b id="selected-pilot-call-sign">MAVERICK</b><small id="pilot-profile-role">LEAD · VF-81</small><small id="pilot-profile-status">READY FOR SORTIE</small></div></div>
+      </section>
+    </aside>
+    <aside class="tactical-briefing" aria-label="전술 비행 브리핑"><div class="briefing-heading">TACTICAL BRIEFING <b>CLASSIFIED</b></div><span>MISSION / AIR SUPERIORITY</span><p>Maintain low-level formation through the valley. Confirm each waypoint before entering the objective area.</p><div class="briefing-readout"><span>FLIGHT MODE</span><b>MANUAL / VISUAL</b></div><div class="briefing-readout"><span>ROUTE STATUS</span><b class="status-live">● ACTIVE</b></div></aside>
     <div class="crosshair" aria-hidden="true"><i></i><b></b></div>
-    <div class="flight-readout"><span>고도 <b id="altitude">1,200</b> m</span><span>속도 <b id="speed">240</b> km/h</span></div>
+    <div class="flight-readout"><span>AIRSPEED <b id="speed">295</b> KTS</span><span>THROTTLE <b id="power-readout">MIL</b></span></div>
     <section class="overlay" id="overlay">
       <div class="panel">
-        <div class="eyebrow">KF-21 BORAMAE · FLIGHT SIMULATOR</div>
-        <h1 id="title">네 꿈을<br><em>실현해봐</em></h1>
-        <p id="message">숲이 우거진 험준한 계곡을 낮게 가르며 비행하세요.<br>편대를 따라 영화 같은 비행 장면을 만나보세요.</p>
+        <div class="eyebrow">MISSION BRIEF // TACTICAL FLIGHT LOG</div>
+        <h1 id="title">MISSION: AIR SUPERIORITY</h1>
+        <p id="message">LOW-LEVEL ROUTE · WAYPOINTS 01—03 · PACIFIC AO</p>
         <div class="preflight-speed" role="group" aria-label="출격 전 속도 단계 선택"><span>출격 전 속도 선택</span><div><button type="button" data-speed-stage="1" aria-pressed="false">1단계</button><button type="button" data-speed-stage="2" aria-pressed="true">2단계</button><button type="button" data-speed-stage="3" aria-pressed="false">3단계</button></div></div>
         <div class="control-hint"><span>W A S D</span> 또는 <span>↑ ← ↓ →</span><small>키보드 조종 · 모바일은 터치 버튼/드래그</small></div>
-        <button id="start-button">비행 시작 <span>→</span></button>
+        <button id="start-button">START SORTIE <span>↗</span></button>
       </div>
     </section>
     <footer class="help"><span>WASD / 방향키</span> 조종 <i>·</i> <span>드래그 또는 터치 버튼</span> 모바일 조종 <i>·</i> <span>스페이스</span> 일시정지</footer>
@@ -71,6 +101,11 @@
         <button class="touch-key" data-control="down" aria-label="아래로 비행">↓</button>
       </div>
     </nav>
+    <button class="comments-toggle" id="comments-toggle" type="button" aria-expanded="false" aria-controls="comments-drawer">FLIGHT LOG / COMMENTS <span>＋</span></button>
+    <section class="comments-drawer" id="comments-drawer" aria-label="비행 댓글" hidden>
+      <div class="comments-heading"><div><span>AFTER ACTION</span><b>FLIGHT DEBRIEF / COMMENTS</b></div><button id="comments-close" type="button" aria-label="댓글 닫기">×</button></div>
+      <div class="comments-content"><p id="disqus-setup">Disqus comments need this site's registered shortname. Set <code>data-disqus-shortname</code> on the HTML root after creating the site on Disqus.</p><div id="disqus_thread"></div></div>
+    </section>
   </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/Pass.js"></script>
@@ -83,8 +118,36 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/RenderPass.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/UnrealBloomPass.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/BokehPass.js"></script>
-  <script src="script.js?v=low-valley-cinema-v3"></script>
+  <script src="script.js?v=topgun-hud-v4"></script>
   <script>
+    (() => {
+      const drawer = document.getElementById('comments-drawer');
+      const toggle = document.getElementById('comments-toggle');
+      const close = document.getElementById('comments-close');
+      let loaded = false;
+      function setCommentsOpen(open) {
+        drawer.hidden = !open;
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.querySelector('span').textContent = open ? '−' : '＋';
+        if (!open || loaded) return;
+        const shortname = document.documentElement.dataset.disqusShortname;
+        if (!shortname || shortname === 'REPLACE_WITH_DISQUS_SHORTNAME') return;
+        document.getElementById('disqus-setup').hidden = true;
+        window.disqus_config = function () {
+          this.page.url = location.origin + location.pathname;
+          this.page.identifier = location.pathname;
+          this.page.title = document.title;
+        };
+        const script = document.createElement('script');
+        script.src = `https://${shortname}.disqus.com/embed.js`;
+        script.async = true;
+        script.setAttribute('data-timestamp', String(Date.now()));
+        document.body.appendChild(script);
+        loaded = true;
+      }
+      toggle.addEventListener('click', () => setCommentsOpen(drawer.hidden));
+      close.addEventListener('click', () => setCommentsOpen(false));
+    })();
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js', { scope: './' }).catch(() => {}));
     }

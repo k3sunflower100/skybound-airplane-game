@@ -1,9 +1,6 @@
-# Audio assets
+# Flight audio credits
 
-The game uses these Mixkit sound effects under the [Mixkit Sound Effects Free License](https://mixkit.co/license/modal/sfxFree/):
-
-- `audio/engine-loop.mp3` — “War plane loop” (Mixkit sound effect 1568)
-- `audio/ring-bonus.mp3` — “Game bonus reached” (Mixkit sound effect 2065)
-- `audio/flight-music.mp3` — “Game level music” (Mixkit sound effect 689)
-
-The GitHub Pages workflow fetches these licensed files into the deploy artifact so the raw MP3s are not stored alongside the source files in the repository.
+- Engine bed: Mixkit “War plane loop”, sound effect 1568, distributed under the [Mixkit Sound Effects Free License](https://mixkit.co/license/modal/sfxFree/). The Pages workflow fetches its preview MP3 into `audio/engine-loop.mp3`.
+- Ring impact: Mixkit sound effect 2065, under the same Mixkit license.
+- Flight music: Mixkit sound effect 689, under the same Mixkit license.
+- Mixkit also lists “Fast jet engine flying over” (16 seconds) on its airport sound-effects page; it is a useful one-shot flyby reference. The loop currently used in the game is the existing war-plane effect.
