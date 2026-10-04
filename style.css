@@ -21,6 +21,12 @@ button { border:0;border-radius:5px;padding:14px 19px;background:#a8f28d;color:#
 .firework-title { display:inline-block;background:linear-gradient(90deg,#fff49a,#ff8bd8,#91edff,#b9ff8d,#fff49a);background-size:250% auto;background-clip:text;-webkit-background-clip:text;color:transparent;text-shadow:0 0 24px #ffdc6f99;animation:firework-shine 2.4s linear infinite,firework-pop 1.1s cubic-bezier(.2,1.6,.4,1) both; }
 @keyframes firework-shine { to { background-position:250% center; } }
 @keyframes firework-pop { 0% { opacity:0;transform:scale(.25) rotate(-8deg);filter:blur(8px); } 70% { opacity:1;transform:scale(1.12) rotate(2deg);filter:blur(0); } 100% { transform:scale(1); } }
+.speed-selector { position:absolute;z-index:2;top:88px;right:30px;display:grid;justify-items:end;gap:6px;color:#efffea;text-shadow:0 1px 6px #173b32;font:600 10px Outfit,sans-serif;letter-spacing:.08em; }
+.speed-selector div { display:flex;gap:5px; }
+.speed-selector button { min-width:52px;padding:8px 9px;border:1px solid #efffea70;border-radius:6px;background:#183728b8;color:#f3fff0;font:600 11px Outfit,sans-serif;box-shadow:0 3px 10px #08170c40; }
+.speed-selector button[aria-pressed="true"] { background:#b3f58c;color:#17301b;border-color:#e6ffd7;box-shadow:0 0 15px #c0ff9180; }
+.speed-selector button:hover { transform:translateY(-1px); }
+@media(max-width:760px), (pointer:coarse) { .speed-selector { top:156px;right:16px;gap:4px;font-size:9px; }.speed-selector button { min-width:48px;padding:8px 7px;font-size:10px; } }
 @media(max-width:760px), (pointer:coarse) {
   .game-shell { min-height:100svh;height:100svh; }
   .hud { height:72px;padding:0 18px;gap:17px; }
